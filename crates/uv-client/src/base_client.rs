@@ -230,19 +230,22 @@ impl<'a> BaseClientBuilder<'a> {
     fn apply_middleware(&self, client: Client) -> ClientWithMiddleware {
         match self.connectivity {
             Connectivity::Online => {
-                let client = reqwest_middleware::ClientBuilder::new(client);
+                let mut client = reqwest_middleware::ClientBuilder::new(client);
 
-                // Initialize the retry strategy.
-                let retry_policy =
-                    ExponentialBackoff::builder().build_with_max_retries(self.retries);
-                let retry_strategy = RetryTransientMiddleware::new_with_policy_and_strategy(
-                    retry_policy,
-                    UvRetryableStrategy,
-                );
-                let client = client.with(retry_strategy);
+                // Avoid non-cloneable errors with a streaming body during publish.
+                if self.retries > 0 {
+                    // Initialize the retry strategy.
+                    let retry_policy =
+                        ExponentialBackoff::builder().build_with_max_retries(self.retries);
+                    let retry_strategy = RetryTransientMiddleware::new_with_policy_and_strategy(
+                        retry_policy,
+                        UvRetryableStrategy,
+                    );
+                    client = client.with(retry_strategy);
+                }
 
                 // Initialize the authentication middleware to set headers.
-                let client =
+                client =
                     client.with(AuthMiddleware::new().with_keyring(self.keyring.to_provider()));
 
                 client.build()

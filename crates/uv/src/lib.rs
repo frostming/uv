@@ -14,7 +14,7 @@ use uv_cache::{Cache, Refresh};
 use uv_cache_info::Timestamp;
 use uv_cli::{
     compat::CompatArgs, CacheCommand, CacheNamespace, Cli, Commands, PipCommand, PipNamespace,
-    ProjectCommand,
+    ProjectCommand, PublishArgs,
 };
 use uv_cli::{PythonCommand, PythonNamespace, ToolCommand, ToolNamespace};
 #[cfg(feature = "self-update")]
@@ -1028,6 +1028,13 @@ async fn run(cli: Cli) -> Result<ExitStatus> {
             commands::python_dir()?;
             Ok(ExitStatus::Success)
         }
+        Commands::Publish(PublishArgs {
+            files,
+            upload_url,
+            username,
+            password,
+            pep694,
+        }) => commands::publish(files, upload_url, username, password, pep694, printer).await,
     }
 }
 

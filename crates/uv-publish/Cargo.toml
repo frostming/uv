@@ -1,0 +1,35 @@
+[package]
+name = "uv-publish"
+version = "0.1.0"
+edition.workspace = true
+rust-version.workspace = true
+homepage.workspace = true
+documentation.workspace = true
+repository.workspace = true
+authors.workspace = true
+license.workspace = true
+
+[dependencies]
+distribution-filename = { workspace = true }
+uv-client = { workspace = true }
+uv-metadata = { workspace = true }
+reqwest-middleware = { workspace = true }
+
+async-compression = { workspace = true }
+base64 = { workspace = true }
+fs-err = { workspace = true }
+futures = { workspace = true }
+glob = { workspace = true }
+python-pkginfo = { workspace = true }
+reqwest = { workspace = true }
+sha2 = { workspace = true }
+thiserror = { workspace = true }
+tokio = { workspace = true }
+tokio-tar = { workspace = true }
+tracing = { workspace = true }
+url = { workspace = true }
+uv-fs = { workspace = true }
+itertools = { workspace = true }
+
+[lints]
+workspace = true

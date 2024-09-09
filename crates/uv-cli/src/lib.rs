@@ -1,8 +1,3 @@
-use std::ffi::OsString;
-use std::ops::Deref;
-use std::path::PathBuf;
-use std::str::FromStr;
-
 use anyhow::{anyhow, Result};
 use clap::builder::styling::{AnsiColor, Effects, Style};
 use clap::builder::Styles;
@@ -10,6 +5,11 @@ use clap::{Args, Parser, Subcommand};
 use distribution_types::{FlatIndexLocation, IndexUrl};
 use pep508_rs::Requirement;
 use pypi_types::VerbatimParsedUrl;
+use std::ffi::OsString;
+use std::ops::Deref;
+use std::path::PathBuf;
+use std::str::FromStr;
+use url::Url;
 use uv_cache::CacheArgs;
 use uv_configuration::{
     ConfigSettingEntry, ExportFormat, IndexStrategy, KeyringProviderType, PackageNameSpecifier,
@@ -360,6 +360,8 @@ pub enum Commands {
         after_long_help = ""
     )]
     Build(BuildArgs),
+    /// Upload distributions to an index.
+    Publish(PublishArgs),
     /// Manage uv's cache.
     #[command(
         after_help = "Use `uv help cache` for more details.",
@@ -4226,4 +4228,22 @@ pub struct DisplayTreeArgs {
     /// Show the reverse dependencies for the given package. This flag will invert the tree and display the packages that depend on the given package.
     #[arg(long, alias = "reverse")]
     pub invert: bool,
+}
+
+#[derive(Args)]
+pub struct PublishArgs {
+    /// The paths to the files to uploads, as glob expressions.
+    pub files: Option<Vec<String>>,
+    /// The URL to the upload endpoint. NOTE: This is usually not the same as the index URL.
+    #[arg(long, default_value = "https://upload.pypi.org/legacy/")]
+    pub upload_url: Option<Url>,
+    /// The username for the upload.
+    #[arg(long)]
+    pub username: Option<String>,
+    /// The password for the upload.
+    #[arg(long)]
+    pub password: Option<String>,
+    /// Use the draft PEP 694 Upload 2.0 API.
+    #[arg(long, hide = true)]
+    pub pep694: bool,
 }

@@ -67,6 +67,14 @@ impl DistFilename {
             Self::WheelFilename(filename) => &filename.version,
         }
     }
+
+    /// Whether the filename is a `bdist_wheel` or an `sdist`.
+    pub fn filetype(&self) -> &'static str {
+        match self {
+            Self::SourceDistFilename(_) => "sdist",
+            Self::WheelFilename(_) => "bdist_wheel",
+        }
+    }
 }
 
 impl Display for DistFilename {
